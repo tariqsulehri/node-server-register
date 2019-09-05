@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser =  require('body-parser');
 const router   = express.Router();
+const logger   = require('morgan');
 const cors     = require('cors');
 const app =  express();
 const users = require('./routes/users');
@@ -27,9 +28,10 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+app.user(logger('dev'));
 
 
-mongoose.connect('mongodb://localhost/vidly',{useCreateIndex:true ,useNewUrlParser:true})
+mongoose.connect('mongodb://localhost/vidly',{useCreateIndex:true, useFindAndModify: false ,useNewUrlParser:true})
 .then(()=> console.log("Connected to MongoDB"));
 
 let db =  mongoose.connection;
@@ -58,13 +60,30 @@ app.get('/api/users', function(req,res){
          return res.json({ sucess:true ,data:data });
      })
  });
+ 
+app.delete('/api/users', function(req,res){
+    let id =  req.body._id; 
+    userModel.findByIdAndDelete( id ,(err,data)=>{
+        if(err) return res.json({sucess : false, error: err})
+        return res.json({ sucess:true ,data:data });
+    });
+});
 
- app.post('/api/users', function(req,res){
+app.put('/api/users', function(req,res){
+    
+    let {_id } =  req.body;
+    
+    userModel.findByIdAndUpdate( _id, req.body ,(err , data)=>{
+        if(err) return res.json({sucess : false, error: err})
+        return res.json({ sucess:true , data: data });
+    });
+});
+
+app.post('/api/users', function(req,res){
  
     let {id, name, email, password} =  req.body;
     let _userModel =  new userModel();
 
-    
     if(!id || !name || !email){
        return res.json({
           sucess : false,
@@ -73,10 +92,10 @@ app.get('/api/users', function(req,res){
        });
     }
 
-    _userModel.id = req.body.id;
-    _userModel.name = req.body.name;
-    _userModel.email = req.body.email;
-    _userModel.password = req.body.password;
+    _userModel.id = id;
+    _userModel.name = name;
+    _userModel.email = email;
+    _userModel.password = password;
 
     _userModel.save((err)=>{
       if(err) return res.json({sucess:false, error : err});

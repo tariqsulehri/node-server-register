@@ -1,11 +1,14 @@
 const express = require('express');
+const _       = require('lodash')
 const bodyParser =  require('body-parser');
 const logger   = require('morgan');
 const cors     = require('cors');
 
 const whitelist = [
     'http://localhost:3200',
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'http://localhost:3200/users',
+    'http://localhost:3200/users/auth',
   ];
   
   const corsOptions = {

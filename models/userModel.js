@@ -1,7 +1,8 @@
+const jwt     =  require('jsonwebtoken');
 const mongoose =  require('mongoose');
 const Schema =  mongoose.Schema;
 
-const DataSchema =  new Schema(
+const userSchema =  new Schema(
      { 
         id : String,
         name : String,
@@ -12,6 +13,14 @@ const DataSchema =  new Schema(
 
 );
 
-const User =  mongoose.model("userModel",DataSchema);
+userSchema.methods.generateAuthToken =  function(){
+   const token =  jwt.sign({_id : this._id }, 'node_secureJwtKey');
+   return token;
+}
+
+const User =  mongoose.model("userModel", userSchema);
 
 exports.User =  User;
+
+
+//echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p

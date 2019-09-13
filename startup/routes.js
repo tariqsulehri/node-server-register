@@ -1,9 +1,7 @@
 const express = require('express');
 const users   = require('../routes/users');  
 const auth    = require('../routes/auth');
-const bodyParser =  require('body-parser');
-
-
+const home    = require('../routes/home');
 const cors     = require('cors');
 
 const whitelist = [
@@ -26,8 +24,6 @@ const whitelist = [
   }
 
 
-
-
 module.exports =  function(app){
     app.use(cors(corsOptions));
     app.use(express.json());
@@ -35,5 +31,6 @@ module.exports =  function(app){
     app.use(express.urlencoded({extended:true})); //to avoid body-parser depricated
     app.use('/', users);
     app.use('/', auth);
+    app.use('/', home);
 }
 

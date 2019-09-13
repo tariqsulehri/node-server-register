@@ -10,6 +10,7 @@ require('./startup/db')();
 //      res.send("Connected...");
 // })
 
+
 const port =  process.env.PORT || 3200;
 
 app.listen(port,()=>{
